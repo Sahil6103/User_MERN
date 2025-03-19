@@ -2,11 +2,24 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://user-mern.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // Change to your frontend URL in production
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    // credentials: true, // If you're using cookies or authentication tokens
   })
 );
 
